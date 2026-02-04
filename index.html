@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine Proposal</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    font-family: 'Arial Black', Arial, sans-serif;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(135deg, #ff5f9e, #ffc371);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+/* ---------- NEON NAME ---------- */
+.neon {
+    color: #ffb6c1;
+    text-shadow:
+        0 0 5px #ff4da6,
+        0 0 10px #ff4da6,
+        0 0 20px #ff1a8c,
+        0 0 40px #ff1a8c;
+    animation: neonPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes neonPulse {
+    from {
+        text-shadow:
+            0 0 5px #ff4da6,
+            0 0 10px #ff4da6,
+            0 0 20px #ff1a8c;
+    }
+    to {
+        text-shadow:
+            0 0 10px #ff66b2,
+            0 0 20px #ff66b2,
+            0 0 40px #ff1a8c,
+            0 0 60px #ff1a8c;
+    }
+}
+
+/* ---------- BACKGROUND FX ---------- */
+.heart, .graffiti, .firework {
+    position: fixed;
+    z-index: 5;
+    pointer-events: none;
+}
+
+.heart {
+    bottom: -20px;
+    font-size: 24px;
+    animation: floatUp linear infinite;
+    opacity: 0.8;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(-110vh); opacity: 0; }
+}
+
+.firework {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: explode 1.2s ease-out forwards;
+}
+
+@keyframes explode {
+    from { transform: translate(0,0) scale(1); opacity: 1; }
+    to { transform: translate(var(--x), var(--y)) scale(0.3); opacity: 0; }
+}
+
+.graffiti {
+    font-size: 32px;
+    animation: pop 1.5s infinite alternate;
+}
+
+@keyframes pop {
+    from { transform: scale(1); }
+    to { transform: scale(1.4); }
+}
+
+/* ---------- CONTENT ---------- */
+.container {
+    position: relative;
+    z-index: 50;
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: white;
+    text-shadow: 2px 2px 6px #000;
+    margin-bottom: 40px;
+}
+
+.button-area {
+    position: relative;
+    height: 120px;
+}
+
+button {
+    font-size: 1.2rem;
+    padding: 15px 32px;
+    border: none;
+    border-radius: 14px;
+    font-weight: bold;
+}
+
+#yesBtn {
+    background: #00ff88;
+}
+
+#noBtn {
+    background: #ff3b3b;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+#result {
+    display: none;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 6px black;
+}
+
+.gif {
+    width: 240px;
+    margin-top: 20px;
+    border-radius: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🎵 BACKGROUND MUSIC -->
+<audio id="bgMusic" loop preload="auto">
+    <source src="https://raw.githubusercontent.com/Janmejay-07/Song/3ce1342415747301c487be6a7081ee8074e55510/Kesariya%20-%20Flute%20_%20Instrumental.mp3" type="audio/mpeg">
+</audio>
+
+<!-- MAIN -->
+<div class="container" id="main">
+    <h1><span class="neon">POOJA</span>, WILL YOU BE MY VALENTINE? 💖</h1>
+    <div class="button-area">
+        <button id="yesBtn">YES 💘</button>
+        <button id="noBtn">NO 😏</button>
+    </div>
+</div>
+
+<!-- RESULT -->
+<div class="container" id="result">
+    <div>I KNEW YOU LOVE ME 💃💖</div>
+    <img class="gif"
+         src="https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.gif"
+         alt="Celebration">
+</div>
+
+<script>
+/* Floating hearts */
+setInterval(() => {
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "💖";
+    h.style.left = Math.random() * 100 + "vw";
+    h.style.animationDuration = (3 + Math.random() * 3) + "s";
+    document.body.appendChild(h);
+    setTimeout(() => h.remove(), 6000);
+}, 300);
+
+/* NO button escape */
+const noBtn = document.getElementById("noBtn");
+function moveNo() {
+    const pad = 20;
+    noBtn.style.left = Math.random() * (window.innerWidth - noBtn.offsetWidth - pad) + "px";
+    noBtn.style.top = Math.random() * (window.innerHeight - noBtn.offsetHeight - pad) + "px";
+}
+noBtn.addEventListener("mouseover", moveNo);
+noBtn.addEventListener("touchstart", moveNo);
+
+/* Fireworks */
+function launchFireworks() {
+    const colors = ["#ff004c", "#ffea00", "#00ffcc", "#ffffff", "#ff6600"];
+    const safeTop = window.innerHeight * 0.15;
+    const safeBottom = window.innerHeight * 0.75;
+
+    for (let i = 0; i < 120; i++) {
+        const f = document.createElement("div");
+        f.className = "firework";
+        f.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+        let y;
+        do { y = Math.random() * window.innerHeight; }
+        while (y > safeTop && y < safeBottom);
+
+        f.style.left = Math.random() * 100 + "vw";
+        f.style.top = y + "px";
+        f.style.setProperty("--x", (Math.random() - 0.5) * 400 + "px");
+        f.style.setProperty("--y", (Math.random() - 0.5) * 400 + "px");
+
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 1200);
+    }
+}
+
+/* Fullscreen */
+function goFullscreen() {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+}
+
+/* Music fade-in */
+function fadeInMusic(audio) {
+    audio.volume = 0;
+    audio.play();
+    const fade = setInterval(() => {
+        if (audio.volume < 0.5) audio.volume += 0.02;
+        else clearInterval(fade);
+    }, 80);
+}
+
+/* YES click */
+const music = document.getElementById("bgMusic");
+document.getElementById("yesBtn").addEventListener("click", () => {
+    goFullscreen();
+    fadeInMusic(music);
+
+    document.getElementById("main").style.display = "none";
+    document.getElementById("result").style.display = "block";
+
+    launchFireworks();
+
+    for (let i = 0; i < 20; i++) {
+        const g = document.createElement("div");
+        g.className = "graffiti";
+        g.textContent = ["💥","💖","🔥","🎉","😍","💘","✨"][Math.floor(Math.random()*7)];
+        g.style.left = Math.random() * 100 + "vw";
+        g.style.top = Math.random() * 100 + "vh";
+        document.body.appendChild(g);
+    }
+});
+</script>
+
+</body>
+</html>
